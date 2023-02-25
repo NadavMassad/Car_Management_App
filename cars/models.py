@@ -7,8 +7,6 @@ class CustomUser(AbstractUser):
     jobTitle = models.CharField(max_length=50, blank=True)
     department = models.IntegerField(blank=False, default=-1)
     roleLevel = models.SmallIntegerField(blank=True, default=0)
-
-    REQUIRED_FIELDS = []
     
     def __str__(self):
         return self.username
