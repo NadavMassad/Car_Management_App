@@ -1,17 +1,17 @@
 import datetime
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 
-class CustomUser(AbstractUser):
-    id = models.CharField(max_length=10, primary_key=True)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    realID = models.CharField(max_length=10, blank=True)
     jobTitle = models.CharField(max_length=50, blank=True)
-    department = models.IntegerField(blank=False, default=-1)
+    department = models.IntegerField(blank=True)
     roleLevel = models.SmallIntegerField(blank=True, default=0)
-    
-    def __str__(self):
-        return self.username
 
+    def __str__(self):
+        return self.user.first_name + " "  + self.user.last_name
 
 class Departments(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -28,16 +28,16 @@ class Cars(models.Model):
     model = models.CharField(max_length=20)
     color = models.CharField(max_length=20)
     year = models.CharField(max_length=20)
-    department_id = models.ForeignKey(Departments, on_delete=models.PROTECT, null=True)
-
+    department = models.ForeignKey(Departments, on_delete=models.PROTECT, null=True)
+    image = models.ImageField(null=True,blank=True,default='/placeholder.png', upload_to='images/')
     def __str__(self):
         return self.model
 
 
 class CarOrders(models.Model):
     id = models.BigAutoField(primary_key=True)
-    userID = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
-    carID = models.ForeignKey(Cars, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    car = models.ForeignKey(Cars, on_delete=models.PROTECT)
     orderDate = models.DateField(default=datetime.date.today)
     fromDate = models.DateField()
     toDate = models.DateField()
@@ -45,32 +45,25 @@ class CarOrders(models.Model):
     toTime = models.TimeField(auto_now=False, blank=True, default=datetime.time(23,59,59))
     isAllDay = models.BooleanField()
     destination = models.CharField(max_length=50)
+    carImg = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self) :
-        return str(self.orderDate) + " : " +  self.userID.first_name + " " + self.userID.last_name 
+        return str(self.orderDate) + " : " +  self.user.first_name + " " + self.user.last_name 
 
-# creating an instance of
-# datetime.time
-# time(hour = 0, minute = 0, second = 0)
-# d = datetime.time(10, 33, 45)
-
-# creating an instance of
-# datetime.date
-# d = datetime.date(1997, 10, 19)
 
 class CarMaintenance(models.Model):
     id = models.BigAutoField(primary_key=True)
-    carID = models.ForeignKey(Cars, on_delete=models.PROTECT)
+    car = models.ForeignKey(Cars, on_delete=models.PROTECT)
     maintenanceDate = models.DateField()
-    maintenanceFile = models.FileField(upload_to='maintenance/', max_length=200)
+    maintenanceFile = models.FileField(upload_to='maintenance/', max_length=200, blank=True)
     testDate = models.DateField()
-    testFile = models.FileField(upload_to='car_test/', max_length=200)
-    mekifFile = models.FileField(upload_to='mekif/', max_length=200)
-    hovaFile = models.FileField(upload_to='hova/', max_length=200)
+    testFile = models.FileField(upload_to='car_test/', max_length=200, blank=True)
+    mekifFile = models.FileField(upload_to='mekif/', max_length=200, blank=True)
+    hovaFile = models.FileField(upload_to='hova/', max_length=200, blank=True)
     kilometer = models.IntegerField()
 
     def __str__(self):
-        return str(self.carID.model) + " : " + str(self.maintenanceDate)
+        return str(self.car.model) + " : " + str(self.maintenanceDate)
 
 class MaintenanceTypes(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -81,10 +74,10 @@ class MaintenanceTypes(models.Model):
 
 class Shifts(models.Model):
     id = models.BigAutoField(primary_key=True)
-    userID = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
-    carID = models.ForeignKey(Cars, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    car = models.ForeignKey(Cars, on_delete=models.PROTECT)
     shiftDate = models.DateField()
-    maintenanceTypeID = models.ForeignKey(
+    maintenanceType = models.ForeignKey(
         MaintenanceTypes, on_delete=models.PROTECT)
 
     def __str__(self):
@@ -94,8 +87,8 @@ class Shifts(models.Model):
 class Logs(models.Model):
     id = models.BigAutoField(primary_key=True)
     logDate = models.DateTimeField()
-    userID = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
-    carID = models.ForeignKey(Cars, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    car = models.ForeignKey(Cars, on_delete=models.PROTECT)
     action = models.CharField(max_length=50)
 
     def __str__(self):
@@ -103,8 +96,8 @@ class Logs(models.Model):
 
 class Drivings(models.Model):
     id = models.BigAutoField(primary_key=True)
-    userID = models.ForeignKey(CustomUser, on_delete=models.PROTECT)
-    carID = models.ForeignKey(Cars, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    car = models.ForeignKey(Cars, on_delete=models.PROTECT)
     startDate = models.DateField(default=datetime.date.today)
     endDate = models.DateField()
     fromTime = models.TimeField(auto_now=False)

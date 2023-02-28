@@ -2,15 +2,17 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import  status
+from rest_framework import status
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import CustomUser
+from django.contrib.auth.models import User
 from .serializers import *
+
 
 @api_view(['GET'])
 def index(r):
     return Response('index')
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -19,7 +21,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom claims
         token['username'] = user.username
         token['email'] = user.email
-        token['department'] = user.department
         return token
 
 
@@ -27,42 +28,45 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 # Change username to id of the user
+
+
 @api_view(['POST'])
 def register(request):
     if request.data['roleLevel'] == 'worker':
-        roleLevel = 0 
+        roleLevel = 0
     elif request.data['roleLevel'] == 'dep_manager':
         roleLevel = 1
     elif request.data['roleLevel'] == 'sys_manager':
         roleLevel = 2
-    user = CustomUser.objects.create_user(
-                first_name = request.data['first_name'],
-                last_name = request.data['last_name'],
-                username= request.data['first_name'] + request.data['last_name'],
-                jobTitle = request.data['jobTitle'],
-                roleLevel = roleLevel,
-                department = request.data['department'],
-                email=request.data['email'],
-                password=request.data['password'],
-                is_superuser=0
-            )
+    user = User.objects.create_user(
+        first_name=request.data['first_name'],
+        last_name=request.data['last_name'],
+        username=request.data['first_name'] + request.data['last_name'],
+        jobTitle=request.data['jobTitle'],
+        roleLevel=roleLevel,
+        department=request.data['department'],
+        email=request.data['email'],
+        password=request.data['password'],
+        is_superuser=0
+    )
     user.is_active = True
     user.is_staff = True
     user.save()
     return Response("New User Created")
 
+
 @permission_classes([IsAuthenticated])
-class CustomUserView(APIView):
+class UserView(APIView):
     def get(self, request):
-        # user = request.user
-        # my_model = user.customUser_set.all()
-        my_model = CustomUser.objects.all()
-        serializer = CustomUserSerializer(my_model, many=True)
+        user = request.user
+        my_model = user.profile_set.all()
+        # my_model = User.objects.all()
+        serializer = ProfileSerializer(my_model, many=True)
         return Response(serializer.data)
         # return Response("please login...")
 
     # def post(self, request):
-    #     serializer = CustomUserSerializer(
+    #     serializer = ProfileSerializer(
     #         data=request.data, context={'user': request.user})
     #     if serializer.is_valid():
     #         serializer.save()
@@ -70,17 +74,18 @@ class CustomUserView(APIView):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # def put(self, request, id):
-    #     my_model = CustomUser.objects.get(id=id)
-    #     serializer = CustomUserSerializer(my_model, data=request.data)
+    #     my_model = User.objects.get(id=id)
+    #     serializer = ProfileSerializer(my_model, data=request.data)
     #     if serializer.is_valid():
     #         serializer.save()
     #         return Response(serializer.data)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # def delete(self, request, id):
-    #     my_model = CustomUser.objects.get(id=id)
+    #     my_model = User.objects.get(id=id)
     #     my_model.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @permission_classes([IsAuthenticated])
 class CarsView(APIView):
@@ -119,21 +124,27 @@ class DepartmentsView(APIView):
         serializer = DepartmentsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @permission_classes([IsAuthenticated])
 class CarOrdersView(APIView):
     def get(self, request):
-        my_model = CarOrders.objects.all()
-        print(my_model)
-        serializer = CarOrdersSerializer(my_model, many=True)
+        user = request.user
+        user_orders = user.carorders_set.all()
+        serializer = CarOrdersSerializer(user_orders, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = CarOrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            cur_or=CarOrders.objects.get(id=serializer["id"].value)
+            car_image = Cars.objects.get(id=cur_or.car.id)
+            cur_or.carImg=car_image.image.url
+            cur_or.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -168,7 +179,6 @@ class MaintenanceTypesView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @permission_classes([IsAuthenticated])

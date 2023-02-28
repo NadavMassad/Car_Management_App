@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (CustomUser,
+from .models import (Profile,
                      Cars,
                      CarMaintenance,
                      CarOrders,
@@ -10,10 +10,13 @@ from .models import (CustomUser,
                      Shifts)
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
+        model = Profile
         fields = '__all__'
+    def create(self, validate_data):
+        user = self.context['user']
+        return Profile.objects.create(**validate_data,user=user)
 
 
 class CarsSerializer(serializers.ModelSerializer):

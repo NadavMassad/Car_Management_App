@@ -124,7 +124,7 @@ WSGI_APPLICATION = 'myproj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'car_rental',
+        'NAME': 'car_manager',
         'USER': 'postgres',
         'PASSWORD': 'qwer1234',
         'HOST': '127.0.0.1',
@@ -168,7 +168,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static/files',
+    BASE_DIR / 'static',
 ]
 
 TEST_MEDIA_URL = '/car_test/'
@@ -183,12 +183,12 @@ MAINTENANCE_MEDIA_ROOT = os.path.join(BASE_DIR, 'maintenance')
 MEKIF_MEDIA_URL = '/mekif/'
 MEKIF_MEDIA_ROOT = os.path.join(BASE_DIR, 'mekif')
 
-IMAGES_MEDIA_URL = '/images/'
-IMAGES_MEDIA_ROOT = os.path.join(BASE_DIR / "images", 'images')
+# IMAGES_MEDIA_URL = 'files/images/'
+# IMAGES_MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = BASE_DIR / 'static/files/'
+MEDIA_ROOT = BASE_DIR / 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
@@ -196,5 +196,3 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = 'cars.CustomUser'
