@@ -10,15 +10,6 @@ from .models import (Profile,
                      Shifts)
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__'
-    def create(self, validate_data):
-        user = self.context['user']
-        return Profile.objects.create(**validate_data,user=user)
-
-
 class CarsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cars
@@ -31,10 +22,27 @@ class CarMaintenanceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CreateCarOrdersSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = CarOrders
+            fields = '__all__'
+
 class CarOrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarOrders
+        fields = ['user_name', 'car_name', 'orderDate',
+                  'fromDate', 'toDate', 'fromTime', 'toTime', 'isAllDay', 'destination', 'carImg']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
         fields = '__all__'
+
+    def create(self, validate_data):
+        user = self.context['user']
+        return Profile.objects.create(**validate_data, user=user)
 
 
 class DepartmentsSerializer(serializers.ModelSerializer):

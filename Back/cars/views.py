@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
 from .serializers import *
 
-
 @api_view(['GET'])
 def index(r):
     return Response('index')
@@ -20,6 +19,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         # Add custom claims
         token['username'] = user.username
+        # token['realID'] = user.realID
         token['email'] = user.email
         return token
 
@@ -56,15 +56,13 @@ def register(request):
 
 
 @permission_classes([IsAuthenticated])
-class UserView(APIView):
+class ProfileView(APIView):
     def get(self, request):
         user = request.user
-        my_model = user.profile_set.all()
-        # my_model = User.objects.all()
-        serializer = ProfileSerializer(my_model, many=True)
+        my_model = user.profile
+        serializer = ProfileSerializer(my_model, many=False)
         return Response(serializer.data)
-        # return Response("please login...")
-
+    
     # def post(self, request):
     #     serializer = ProfileSerializer(
     #         data=request.data, context={'user': request.user})
@@ -91,7 +89,6 @@ class UserView(APIView):
 class CarsView(APIView):
     def get(self, request):
         my_model = Cars.objects.all()
-        print(my_model)
         serializer = CarsSerializer(my_model, many=True)
         return Response(serializer.data)
 
@@ -116,7 +113,6 @@ class CarsView(APIView):
 class DepartmentsView(APIView):
     def get(self, request):
         my_model = Departments.objects.all()
-        print(my_model)
         serializer = DepartmentsSerializer(my_model, many=True)
         return Response(serializer.data)
 
@@ -134,17 +130,18 @@ class CarOrdersView(APIView):
     def get(self, request):
         user = request.user
         user_orders = user.carorders_set.all()
-        serializer = CarOrdersSerializer(user_orders, many=True)
+        serializer = CarOrdersSerializer(user_orders, many=True)        
         return Response(serializer.data)
 
+
     def post(self, request):
-        serializer = CarOrdersSerializer(data=request.data)
+        serializer = CreateCarOrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            cur_or=CarOrders.objects.get(id=serializer["id"].value)
-            car_image = Cars.objects.get(id=cur_or.car.id)
-            cur_or.carImg=car_image.image.url
-            cur_or.save()
+            cur_order = CarOrders.objects.get(id=serializer["id"].value)
+            car = Cars.objects.get(id=request.data['car'])
+            cur_order.carImg = car.image.url
+            cur_order.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -152,9 +149,10 @@ class CarOrdersView(APIView):
 @permission_classes([IsAuthenticated])
 class CarMaintenanceView(APIView):
     def get(self, request):
-        my_model = CarMaintenance.objects.all()
+        my_model = CarMaintenance.objects.all().values('car')
         print(my_model)
         serializer = CarMaintenanceSerializer(my_model, many=True)
+        print(serializer.data)
         return Response(serializer.data)
 
     def post(self, request):
