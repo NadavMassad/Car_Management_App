@@ -1,10 +1,10 @@
 import axios from  'axios';
 
-const MY_SERVER = "http://127.0.0.1:8000/orders"
+export const CARS_SERVER = "http://127.0.0.1:8000/cars"
 
 // A mock function to mimic making an async request for data
-export const getOrders = async (token: string) => {
-  return axios.get(MY_SERVER, 
+export const getCars = async (token: string) => {
+  return axios.get(CARS_SERVER, 
     {
       headers: {
         'Authorization': `Bearer ${token}`

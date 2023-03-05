@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import OrderModel from '../../models/Order';
-import { getOrders } from './MyOrdersAPI';
+import { addOrder, getOrders } from './OrdersAPI';
 
 export interface OrderState {
   orders: OrderModel[]
@@ -19,6 +19,14 @@ export const getOrdersAsync = createAsyncThunk(
   }
 );
 
+export const addOrderAsync = createAsyncThunk(
+  'myOrder/addOrder',
+  async ({ token, order }: { token: string, order: OrderModel }) => {
+    const response = await addOrder(token, order);
+    return response;
+  }
+);
+
 export const myOrderSlice = createSlice({
   name: 'myOrder',
   initialState,
@@ -28,8 +36,10 @@ export const myOrderSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getOrdersAsync.fulfilled, (state, action) => {
-        console.log(action.payload)
         state.orders = action.payload
+      })
+      .addCase(addOrderAsync.fulfilled, (state, action) => {
+        console.log(action.payload)
       });
   },
 });

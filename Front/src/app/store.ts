@@ -1,9 +1,19 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import  myOrderReducer  from '../features/counter/myOrdersSlice';
+import carsReducer from '../components/cars/carsSlice';
+import  depsReducer  from '../components/deps/depsSlicer';
+import  driveReducer from '../components/drivings/drivesSlicer';
+import loginReducer  from '../components/login/loginSlice';
+import  myOrderReducer  from '../components/orders/OrdersSlice';
+import  profileReducer  from '../components/profile/profileSlicer';
 
 export const store = configureStore({
   reducer: {
     myOrder: myOrderReducer,
+    myCars: carsReducer,
+    login: loginReducer,
+    drive: driveReducer,
+    profile: profileReducer,
+    dep: depsReducer,
   },
 });
 
