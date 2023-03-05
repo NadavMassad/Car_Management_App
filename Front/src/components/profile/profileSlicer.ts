@@ -14,7 +14,9 @@ const initialState: profileState = {
         jobTitle: ' ',
         realID: '',
         roleLevel: 0,
-        user: ' '
+        user: ' ',
+        user_name: '',
+        dep_name: ''
     }
 };
 

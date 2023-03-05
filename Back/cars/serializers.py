@@ -31,10 +31,10 @@ class CarOrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarOrders
         fields = ['user_name', 'car_name', 'orderDate',
-                  'fromDate', 'toDate', 'fromTime', 'toTime', 'isAllDay', 'destination', 'carImg']
+                  'fromDate', 'toDate', 'fromTime', 'toTime', 'isAllDay', 'destination', 'car_image']
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class CreateProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
@@ -43,6 +43,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     def create(self, validate_data):
         user = self.context['user']
         return Profile.objects.create(**validate_data, user=user)
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ['user_name', 'realID', 'jobTitle', 'dep_name', 'department']
 
 
 class DepartmentsSerializer(serializers.ModelSerializer):

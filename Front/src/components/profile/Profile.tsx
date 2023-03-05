@@ -12,23 +12,19 @@ const Profile = () => {
     const dispatch = useAppDispatch()
     const profile = useAppSelector(profileSelector)
     const token = useAppSelector(userAccess)
-    const deps = useAppSelector(depsSelector)
-    let decoded_token: any = jwt_decode(token)
-    const userDep: DepModel = deps.filter(dep => +profile.department === dep.id)[0]
 
     useEffect(() => {
         dispatch(getProfileAsync(token))
-        dispatch(getDepsAsync(token))
     }, [])
 
-    
+
     return (
         <div>
             <div>
-                Name: {decoded_token.username}
+                Name: {profile.user_name}
             </div>
             <div>
-                Department:  {userDep && userDep.name}
+                Department:  {profile.dep_name}
             </div>
             <div>
                 Job Title: {profile.jobTitle}

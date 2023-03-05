@@ -13,23 +13,21 @@ export function Cars() {
   let decoded_token: any = jwt_decode(token)
   const profile = useAppSelector(profileSelector)
   useEffect(() => {
-    // We call this function to filter the cars to 
-    // match the department of the user
     dispatch(getProfileAsync(token)) 
     dispatch(getCarsAsync(token))
+    console.log(cars)
   }, [cars.length])
 
 
   return (
     <div>
-      <h1>Cars</h1><hr />
+      <h1>Cars Available For Your Department</h1><hr />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
-        {cars.map((car, i) =>
-          car.department === profile.department &&
+        {cars.filter(car=> car.department === profile.department).map((car, i) =>
           <div key={i} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem' }}>
 
             <div>
-              Department: {car.department}<br />
+              {/* Department: {car.department}<br /> */}
               Maker: {car.make}<br />
               Model: {car.model}<br />
               Color: {car.color}<br />

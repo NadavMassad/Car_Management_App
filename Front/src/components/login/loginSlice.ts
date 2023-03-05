@@ -18,7 +18,6 @@ export const loginAsync = createAsyncThunk(
   'login/login',
   async (cred: any) => {
     const response = await login(cred);
-    console.log(response)
     return response;
   }
 );

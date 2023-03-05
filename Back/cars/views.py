@@ -63,13 +63,17 @@ class ProfileView(APIView):
         serializer = ProfileSerializer(my_model, many=False)
         return Response(serializer.data)
     
-    # def post(self, request):
-    #     serializer = ProfileSerializer(
-    #         data=request.data, context={'user': request.user})
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+        print(request.data)
+        print(request.user)
+        print('*' * 40)
+        serializer = CreateProfileSerializer(
+            data=request.data, context={'user': request.user})
+        if serializer.is_valid():
+            serializer.save()
+            # print(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # def put(self, request, id):
     #     my_model = User.objects.get(id=id)
