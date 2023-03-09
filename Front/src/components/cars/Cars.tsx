@@ -1,30 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { carsSelector, getCarsAsync } from './carsSlice';
 import { userAccess } from '../login/loginSlice';
-import jwt_decode from "jwt-decode";
 import { getProfileAsync, profileSelector } from '../profile/profileSlicer';
 
 export function Cars() {
   const cars = useAppSelector(carsSelector);
   const dispatch = useAppDispatch();
   const token = useAppSelector(userAccess)
-  let decoded_token: any = jwt_decode(token)
   const profile = useAppSelector(profileSelector)
   useEffect(() => {
     dispatch(getProfileAsync(token)) 
     dispatch(getCarsAsync(token))
-    console.log(cars)
   }, [cars.length])
 
 
   return (
     <div>
-      <h1>Cars Available For Your Department</h1><hr />
+      <h1>Cars Available For Your Department</h1>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
-        {cars.filter(car=> car.department === profile.department).map((car, i) =>
-          <div key={i} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem' }}>
+        {cars.map(car =>
+          <div key={car.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem' }}>
 
             <div>
               {/* Department: {car.department}<br /> */}

@@ -25,8 +25,6 @@ class Profile(models.Model):
     def dep_name(self):
         return self.department.name
     
-
-
     def __str__(self):
         return self.user_name
 
@@ -131,7 +129,7 @@ class Shifts(models.Model):
     
 
     def __str__(self):
-        return self.user_name + ': ' + self.maintenance_name
+        return self.user_name + ': ' + self.car_name + ' ' + self.maintenance_name
 
 
 class Logs(models.Model):
@@ -151,7 +149,7 @@ class Logs(models.Model):
     
 
     def __str__(self):
-        return str(self.logDate) + ' ' + self.user_name + self.car_name
+        return str(self.logDate) + ' ' + self.user_name + ' ' + self.car_name
 
 
 class Drivings(models.Model):

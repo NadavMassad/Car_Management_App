@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import jwt_decode from "jwt-decode";
-import axios from 'axios';
-
+import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { userAccess } from '../login/loginSlice'
 import { getProfileAsync, profileSelector } from './profileSlicer'
-import { DepModel } from '../../models/Deps';
-import { depsSelector, getDepsAsync } from '../deps/depsSlicer';
 
 const Profile = () => {
     const dispatch = useAppDispatch()
@@ -20,6 +15,7 @@ const Profile = () => {
 
     return (
         <div>
+            <h1>Your Profile</h1>
             <div>
                 Name: {profile.user_name}
             </div>
