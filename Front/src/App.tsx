@@ -44,23 +44,23 @@ function App() {
 
           <div className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`} id="navbarsExample09">
             <a className="nav-link " href="/login">Login</a>
-            <a className="nav-link " href="/MyOrders">הזמנות שלי</a>
-            <a className="nav-link " href="/Orders">הזמנת רכב</a>
+            <a className="nav-link " href="/myOrders">הזמנות שלי</a>
+            <a className="nav-link " href="/makeOrder">הזמנת רכב</a>
             <a className="nav-link " href="/maintenance">טיפולי רכב</a>
-            <a className="nav-link " href="/">ניהול נסיעות</a>
+            <a className="nav-link " href="/drivings">ניהול נסיעות</a>
             {/* רק מנהל מחלקה יכול לראות את התפריטים הבאים */}
            <Dropdown >
               <Dropdown.Toggle variant="transparent" style={{color:"white !important"}} id="dropdown-basic">
                 פעולות מנהל     </Dropdown.Toggle>
 
               <Dropdown.Menu >
-                <Dropdown.Item style={{textAlign:"right"}} href="/Departements">מחלקות</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/AllUsers">משתמשים</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/AllCars">רכבים</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/MaintenanceTypes">סוגי טיפולי רכב</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/Shifts">ניהול תורנויות</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/Reports">דוחות</Dropdown.Item>
-                <Dropdown.Item style={{textAlign:"right"}} href="/Logs">מעקב פעולות</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/departements">מחלקות</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/allUsers">משתמשים</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/Cars">רכבים</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/maintenanceTypes">סוגי טיפולי רכב</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/shifts">ניהול תורנויות</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/reports">דוחות</Dropdown.Item>
+                <Dropdown.Item style={{textAlign:"right"}} href="/logs">מעקב פעולות</Dropdown.Item>
 
               </Dropdown.Menu>
             </Dropdown>

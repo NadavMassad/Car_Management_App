@@ -95,3 +95,64 @@
   color:white !important;
   border-color: transparent !important;
 }
+
+/* .round{
+  width: 100px;
+  height: 100px;
+  background: radial-gradient( rgba(10, 53, 33, 0.8) 60%, rgba(255, 255, 255, 1) 62%);
+  border-radius: 50%;
+  position: relative;
+  display: block;
+  margin: 100px auto;
+  box-shadow: 0px 0px 25px 3px rgba(10,53, 33, 0.8);
+  
+} */
+.round {
+  color: white;
+  border: none;
+  padding: 5px;
+  font-size: 31px;
+  height: 130px;
+  width: 130px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+  border-radius: 70%;
+  color:white !important;
+  font-weight: bold !important;
+}
+
+
+.round:active { 
+  transform: translateY(2px);
+}
+.greenBtn{
+  /* background-color: #5CB85C; */
+  /* box-shadow: 0 2px 4px darkslategray; */
+  background: radial-gradient( rgba(92, 184, 92, 0.8) 65%, rgba(255, 255, 255, 1) 62%);
+}
+.greenBtn:hover {
+  background-color: #5CB85C;
+  opacity: 0.8;
+ }
+ .greenBtn:active {
+  box-shadow: 0 0 2px darkslategray;
+}
+.redBtn{
+  background-color: #D9534F;
+  box-shadow: 0 2px 4px darkslategray;
+}
+.redBtn:hover {
+  background-color: #D9534F;
+  opacity: 0.8;
+ }
+ .redBtn:active {
+  box-shadow: 0 0 2px darkslategray;
+}
+
+
+
+
+
+
+

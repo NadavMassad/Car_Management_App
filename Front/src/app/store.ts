@@ -3,7 +3,7 @@ import carsReducer from '../components/cars/carsSlice';
 import  depsReducer  from '../components/deps/depsSlicer';
 import  driveReducer from '../components/drivings/drivesSlicer';
 import loginReducer  from '../components/login/loginSlice';
-import  logReducer  from '../components/logs_folder/logsSlice';
+import  logReducer  from '../components/logs/logsSlice';
 import  myOrderReducer  from '../components/orders/OrdersSlice';
 import  profileReducer  from '../components/profile/profileSlicer';
 

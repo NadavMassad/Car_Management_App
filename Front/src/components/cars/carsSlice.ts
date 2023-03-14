@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import CarModel from '../../models/Car';
 import OrderModel from '../../models/Order';
-import { getCars } from './carsAPI';
+import { getAllCars, getCars } from './carsAPI';
 // import { getOrders } from './carssAPI';
 
 export interface CarState {
@@ -21,6 +21,14 @@ export const getCarsAsync = createAsyncThunk(
   }
 );
 
+export const getAllCarsAsync = createAsyncThunk(
+  'myCars/getAllCars',
+  async (token: string) => {
+    const response = await getAllCars(token);
+    return response;
+  }
+);
+
 export const carsSlice = createSlice({
   name: 'myCars',
   initialState,
@@ -29,6 +37,9 @@ export const carsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(getAllCarsAsync.fulfilled, (state, action) => {
+      state.cars = action.payload
+    })
       .addCase(getCarsAsync.fulfilled, (state, action) => {
         state.cars = action.payload
       });

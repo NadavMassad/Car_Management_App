@@ -16,6 +16,15 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { Login } from './components/login/Login';
 import Profile from './components/profile/Profile';
+import Logs from './components/logs/Logs';
+import { Cars } from './components/cars/Cars';
+import MakeOrder from './components/orders/MakeOrder';
+import Maintenance from './components/maintenance/Maintenance';
+import Departments from './components/deps/Departments';
+import { Drivings } from './components/drivings/Drivings';
+import Users from './components/users/Users';
+import MaintenanceType from './components/maintenance/MaintenanceType';
+import Notifications from './components/notifications/Notifications';
 
 
 const container = document.getElementById('root')!;
@@ -27,9 +36,18 @@ root.render(
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<App />} >
-                        <Route path="/MyOrders" element={<MyOrders/>} />
+                        <Route path="/myOrders" element={<MyOrders/>} />
                         <Route path="/login" element={<Login/>} />
                         <Route path="/profile" element={<Profile/>} />
+                        <Route path="/logs" element={<Logs/>} />
+                        <Route path="/Cars" element={<Cars/>} />
+                        <Route path="/makeOrder" element={<MakeOrder/>} />
+                        <Route path="/maintenance" element={<Maintenance/>} />
+                        <Route path="/drivings" element={<Drivings/>} />
+                        <Route path="/departements" element={<Departments/>} />                        
+                        <Route path="/allUsers" element={<Users/>} />
+                        <Route path="/maintenanceTypes" element={<MaintenanceType/>} />
+                        <Route path="/notifications" element={<Notifications/>} />
                     </Route>
                 </Routes>
             </BrowserRouter>

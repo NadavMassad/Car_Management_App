@@ -68,16 +68,25 @@ class ProfileView(APIView):
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
+
+@permission_classes([IsAuthenticated])
+class AllCarsView(APIView):
+    def get(self, request):
+        cars = Cars.objects.all()
+        serializer = CarsSerializer(cars, many=True)
+        return Response(serializer.data)
+
+
 @permission_classes([IsAuthenticated])
 class CarsView(APIView):
     def get(self, request):
         user = request.user
-        cars_model = Cars.objects.all()
-        print(user.profile.department.id)
-        # The next row filters the cars_model list to contain only the
-        # cars matching the user's department id.
-        cars = list(filter(lambda car: (car.department.id  == user.profile.department.id), cars_model))
-        serializer = CreateCarsSerializer(cars, many=True)
+        cars = Cars.objects.all()
+            # The next row filters the cars_model list to contain only the
+            # cars matching the user's department id.
+        cars = list(filter(lambda car: (car.department.id  == user.profile.department.id), cars))
+        serializer = CarsSerializer(cars, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -119,16 +128,19 @@ class CarOrdersView(APIView):
         user = request.user
         user_orders = user.carorders_set.all()
         serializer = CarOrdersSerializer(user_orders, many=True)
+        all_orders = CarOrders.objects.all()
+        myDate = ''
+        for order in all_orders:
+            print(order.fromDate)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = CreateCarOrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            cur_order = CarOrders.objects.get(id=serializer["id"].value)
-            car = Cars.objects.get(id=request.data['car'])
-            cur_order.carImg = car.image.url
-            cur_order.save()
+            all_orders = CarOrders.objects.all()
+            for order in all_orders:
+                pass
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,9 +149,7 @@ class CarOrdersView(APIView):
 class CarMaintenanceView(APIView):
     def get(self, request):
         my_model = CarMaintenance.objects.all().values('car')
-        print(my_model)
         serializer = CarMaintenanceSerializer(my_model, many=True)
-        print(serializer.data)
         return Response(serializer.data)
 
     def post(self, request):
@@ -186,7 +196,6 @@ class ShiftsView(APIView):
 class LogsView(APIView):
     def get(self, request):
         my_model = Logs.objects.all()
-        print(my_model)
         serializer = LogsSerializer(my_model, many=True)
         return Response(serializer.data)
 

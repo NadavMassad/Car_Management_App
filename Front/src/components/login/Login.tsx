@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import {
@@ -12,6 +12,13 @@ export function Login() {
   const [username, setusername] = useState("")
   const [password, setpassword] = useState("")
   const logged = useAppSelector(isLogged)
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      logout()
+    }
+  }, [])
+  
 
   return (
     <div>
