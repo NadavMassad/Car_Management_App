@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -11,8 +13,6 @@ from .serializers import *
 @api_view(['GET'])
 def index(r):
     return Response('index')
-
-
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -68,8 +68,6 @@ class ProfileView(APIView):
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
 @permission_classes([IsAuthenticated])
 class AllCarsView(APIView):
     def get(self, request):
@@ -79,13 +77,40 @@ class AllCarsView(APIView):
 
 
 @permission_classes([IsAuthenticated])
+class AvaliableOrdersView(APIView):
+    def post(self, request):
+        date_object = {"fromDate": request.data["fromDate"], "toDate": request.data["toDate"]}
+        fromDate = datetime.fromisoformat(date_object['fromDate'][:-1])
+        toDate = datetime.fromisoformat(date_object['toDate'][:-1])
+        all_orders = CarOrders.objects.all()
+        all_cars = Cars.objects.all()
+        available_cars = set()
+        cars_black_list = set() # Contains the cars that are taken on the specific date
+        for order in all_orders:
+            # This row checks wether there is alreay and order on the dates the user entered.
+            if (order.toDate.replace(tzinfo=None) <= toDate and order.toDate.replace(tzinfo=None) >= fromDate) or (order.fromDate.replace(tzinfo=None) <= toDate and order.fromDate.replace(tzinfo=None) >= fromDate):
+                cars_black_list.add(order.car)
+            else:
+                available_cars.add(order.car)
+        # print(available_cars.difference(cars_black_list))
+        cars = available_cars.difference(cars_black_list)
+        for car in Cars.objects.all():
+            if car not in cars_black_list:
+                cars.add(car)
+
+        serializer = CarsSerializer(list(cars), many=True)
+        return Response(serializer.data)
+
+
+@permission_classes([IsAuthenticated])
 class CarsView(APIView):
     def get(self, request):
         user = request.user
         cars = Cars.objects.all()
-            # The next row filters the cars_model list to contain only the
-            # cars matching the user's department id.
-        cars = list(filter(lambda car: (car.department.id  == user.profile.department.id), cars))
+        # The next row filters the cars_model list to contain only the
+        # cars matching the user's department id.
+        cars = list(filter(lambda car: (car.department.id ==
+                    user.profile.department.id), cars))
         serializer = CarsSerializer(cars, many=True)
         return Response(serializer.data)
 
@@ -129,18 +154,12 @@ class CarOrdersView(APIView):
         user_orders = user.carorders_set.all()
         serializer = CarOrdersSerializer(user_orders, many=True)
         all_orders = CarOrders.objects.all()
-        myDate = ''
-        for order in all_orders:
-            print(order.fromDate)
         return Response(serializer.data)
 
     def post(self, request):
         serializer = CreateCarOrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            all_orders = CarOrders.objects.all()
-            for order in all_orders:
-                pass
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,14 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
+import CarModel from '../../models/Car';
+import { DatesCheck } from '../../models/DatesCheck';
 import OrderModel from '../../models/Order';
-import { addOrder, getOrders } from './OrdersAPI';
+import { addOrder, checkOrderDates, getOrders } from './OrdersAPI';
 
 export interface OrderState {
   orders: OrderModel[]
+  sortderCars: CarModel[]
 }
 
 const initialState: OrderState = {
-  orders: []
+  orders: [],
+  sortderCars: []
 };
 
 export const getOrdersAsync = createAsyncThunk(
@@ -27,6 +31,14 @@ export const addOrderAsync = createAsyncThunk(
   }
 );
 
+export const checkOrderDatesAsync = createAsyncThunk(
+  'myOrder/checkOrderDates',
+  async ({ token, dates }: { token: string, dates: DatesCheck }) => {
+    const response = await checkOrderDates(token, dates);
+    return response;
+  }
+);
+
 export const myOrderSlice = createSlice({
   name: 'myOrder',
   initialState,
@@ -39,11 +51,15 @@ export const myOrderSlice = createSlice({
         state.orders = action.payload
       })
       .addCase(addOrderAsync.fulfilled, (state, action) => {
-        console.log(action.payload)
+        state.orders.push(action.payload)
+      })
+      .addCase(checkOrderDatesAsync.fulfilled, (state, action) => {
+        state.sortderCars = action.payload
       });
   },
 });
 
 export const { } = myOrderSlice.actions;
 export const ordersSelector = (state: RootState) => state.myOrder.orders;
+export const avilableCarsSelector = (state: RootState) => state.myOrder.sortderCars;
 export default myOrderSlice.reducer;

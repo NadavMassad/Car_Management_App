@@ -31,14 +31,14 @@ export function MyOrders() {
         {orders.map(order =>
           <div key={order.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem', textAlign: 'center' }}>
             מכונית: {order.car_name}<br />
-            מתאריך: {order.fromDate.toString()}<br />
-            עד לתאריך: {order.toDate.toString()}<br />
+            מתאריך: {order.fromDate!.toString()}<br />
+            עד לתאריך: {order.toDate!.toString()}<br />
             {order.isAllDay ? <div> כל היום</div> :
-              <div> משעה: {order.fromDate.toString()}<br />
-                עד שעה: {order.toDate.toString()}</div>
+              <div> משעה: {order.fromDate!.toString()}<br />
+                עד שעה: {order.toDate!.toString()}</div>
             }
             יעד: {order.destination}<br />
-            <img src={`http://127.0.0.1:8000${order.car_image}`} style={{ width: '150px', height: '100px' }} alt={order.car} /><br />
+            <img src={`http://127.0.0.1:8000${order.car_image}`} style={{ width: '150px', height: '100px' }} alt={order.car_name} /><br />
           </div>)}
       </div>
     </div>

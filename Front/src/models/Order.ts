@@ -3,12 +3,12 @@ export default interface OrderModel {
     user: string
     user_name?: string
     car_name?: string
-    car: string
+    car?: number
     carName?: string
-    orderDate: string
-    fromDate:Date
-    toDate:  Date
+    orderDate: Date | null | string
+    fromDate:Date | null
+    toDate:  Date | null
     isAllDay: boolean
-    destination : string
-    car_image: string
+    destination? : string
+    car_image?: string
 }

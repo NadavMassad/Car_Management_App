@@ -55,9 +55,9 @@ class CarOrders(models.Model):
     id = models.BigAutoField(primary_key=True) 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Cars, on_delete=models.CASCADE, null=True)
-    orderDate = models.DateField(default=datetime.date.today)
-    fromDate = models.DateTimeField()
-    toDate = models.DateTimeField()
+    orderDate = models.DateTimeField(format('DD-MM-YYYY'), default=datetime.date.today)
+    fromDate = models.DateTimeField(format('DD-MM-YYYY'))
+    toDate = models.DateTimeField(format('DD-MM-YYYY'))
     isAllDay = models.BooleanField()
     destination = models.CharField(max_length=50)
 
