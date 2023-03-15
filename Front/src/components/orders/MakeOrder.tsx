@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../app/hooks'
 import { carsSelector, getCarsAsync } from '../cars/carsSlice'
 import { userAccess } from '../login/loginSlice';
-import { addOrderAsync, avilableCarsSelector, checkOrderDatesAsync, getOrdersAsync, ordersSelector } from './OrdersSlice';
+import { addOrderAsync, availableCarsSelector, checkOrderDatesAsync, getOrdersAsync, notAvilableSelector, ordersSelector } from './OrdersSlice';
 import { Dayjs } from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -16,7 +16,8 @@ const MakeOrder = () => {
   const dispatch = useAppDispatch()
   const cars = useAppSelector(carsSelector)
   const token = useAppSelector(userAccess)
-  const availableCars = useAppSelector(avilableCarsSelector)
+  const availableCars = useAppSelector(availableCarsSelector)
+  const notAvailableCars = useAppSelector(notAvilableSelector)
   const decoded: any = jwt_decode(token)
   const orders = useAppSelector(ordersSelector)
   const [isAllDay, setisAllDay] = useState(false)
@@ -72,14 +73,13 @@ const MakeOrder = () => {
       setfromDate(start_date)
       settoDate(end_date)
     }
-
+ 
   }
   // This function is used to manage the calls to the server
   // and handle the variables we send.
   const exeucte = () => {
     handleDateTimeVar()
-    // dispatch(checkOrderDatesAsync({token: token, dates: {fromDate: fromDate, toDate: toDate, isAllDay: isAllDay} }))
-    // dispatch(getOrdersAsync(token))
+    // dispatch(checkOrderDatesAsync({ token: token, dates: { fromDate: fromDate, toDate: toDate, isAllDay: isAllDay } }))    // dispatch(getOrdersAsync(token))
   }
 
 
@@ -126,7 +126,7 @@ const MakeOrder = () => {
 
         {formatedStartDate &&
           <div>
-            <b>מתאריך:</b> 
+            <b>מתאריך:</b>
             {formatedStartDate}
           </div>}<br />
         {formatedStartTime &&
@@ -139,14 +139,14 @@ const MakeOrder = () => {
             <b>עד שעה:</b>
             {formatedEndTime.slice(0, -3)}
           </div>}
-          {isAllDay && 
+        {isAllDay &&
           <div>
             <b>כל היום</b>
           </div>
 
-          }
+        }
       </div>
-      <button onClick={() => dispatch(checkOrderDatesAsync({token: token, dates: {fromDate: fromDate, toDate: toDate, isAllDay: isAllDay} }))}>POST Request</button>
+      <button onClick={() => dispatch(checkOrderDatesAsync({ token: token, dates: { fromDate: fromDate, toDate: toDate, isAllDay: isAllDay } }))}>POST Request</button>
       {/* Display The cars */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
         {availableCars.map(car =>
@@ -159,13 +159,30 @@ const MakeOrder = () => {
               צבע: {car.color}<br />
               שנה: {car.year}   <br />
               <img src={`http://127.0.0.1:8000${car.image}`} style={{ width: '150px', height: '100px' }} alt={car.model} /><br />
-              {/* <button>Order Car</button> */}
+              <button onClick={()=> dispatch(addOrderAsync({token: token, order: {user: decoded.user_id, car: car.id, orderDate: new Date(), fromDate, toDate, isAllDay}}))}>Order Car</button>
             </div>
-
-
           </div>)}
       </div>
+      {notAvailableCars.length > 0 &&
+        <div>
+          <hr />
+          <h3>לא זמינות</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
+            {notAvailableCars.map(car =>
+              <div key={car.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem' }}>
 
+                <div style={{ textAlign: 'center' }}>
+                  מחלקה: {car.dep_name}<br />
+                  יצרן: {car.make}<br />
+                  דגם: {car.model}<br />
+                  צבע: {car.color}<br />
+                  שנה: {car.year}   <br />
+                  <img src={`http://127.0.0.1:8000${car.image}`} style={{ width: '150px', height: '100px' }} alt={car.model} /><br />
+                </div>
+              </div>)}
+          </div>
+        </div>
+      }
     </div>
   )
 }

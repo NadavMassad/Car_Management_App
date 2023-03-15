@@ -6,8 +6,6 @@ import {
   ordersSelector
 } from './OrdersSlice';
 import { userAccess } from '../login/loginSlice';
-import { carsSelector, getCarsAsync } from '../cars/carsSlice';
-import MakeOrder from './MakeOrder';
 
 
 export function MyOrders() {
@@ -19,7 +17,6 @@ export function MyOrders() {
 
   useEffect(() => {
     dispatch(getOrdersAsync(token))
-    dispatch(getCarsAsync(token))
   }, [orders.length])
 
 
@@ -32,7 +29,6 @@ export function MyOrders() {
           <div key={order.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem', textAlign: 'center' }}>
             מכונית: {order.car_name}<br />
             מתאריך: {order.fromDate!.toString()}<br />
-            עד לתאריך: {order.toDate!.toString()}<br />
             {order.isAllDay ? <div> כל היום</div> :
               <div> משעה: {order.fromDate!.toString()}<br />
                 עד שעה: {order.toDate!.toString()}</div>

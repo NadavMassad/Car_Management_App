@@ -7,12 +7,14 @@ import { addOrder, checkOrderDates, getOrders } from './OrdersAPI';
 
 export interface OrderState {
   orders: OrderModel[]
-  sortderCars: CarModel[]
+  availableCars: CarModel[]
+  notAvilable: CarModel[]
 }
 
 const initialState: OrderState = {
   orders: [],
-  sortderCars: []
+  availableCars: [],
+  notAvilable: []
 };
 
 export const getOrdersAsync = createAsyncThunk(
@@ -35,6 +37,7 @@ export const checkOrderDatesAsync = createAsyncThunk(
   'myOrder/checkOrderDates',
   async ({ token, dates }: { token: string, dates: DatesCheck }) => {
     const response = await checkOrderDates(token, dates);
+    console.log(response)
     return response;
   }
 );
@@ -54,12 +57,15 @@ export const myOrderSlice = createSlice({
         state.orders.push(action.payload)
       })
       .addCase(checkOrderDatesAsync.fulfilled, (state, action) => {
-        state.sortderCars = action.payload
+        state.availableCars = action.payload.available
+        state.notAvilable = action.payload.notAvilable
       });
   },
 });
 
 export const { } = myOrderSlice.actions;
 export const ordersSelector = (state: RootState) => state.myOrder.orders;
-export const avilableCarsSelector = (state: RootState) => state.myOrder.sortderCars;
+export const availableCarsSelector = (state: RootState) => state.myOrder.availableCars;
+export const notAvilableSelector = (state: RootState) => state.myOrder.notAvilable;
+
 export default myOrderSlice.reducer;
