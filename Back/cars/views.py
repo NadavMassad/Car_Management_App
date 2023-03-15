@@ -79,11 +79,11 @@ class AllCarsView(APIView):
 @permission_classes([IsAuthenticated])
 class AvaliableOrdersView(APIView):
     def post(self, request):
+        user = request.user
         date_object = {"fromDate": request.data["fromDate"], "toDate": request.data["toDate"]}
         fromDate = datetime.fromisoformat(date_object['fromDate'][:-1])
         toDate = datetime.fromisoformat(date_object['toDate'][:-1])
         all_orders = CarOrders.objects.all()
-        all_cars = Cars.objects.all()
         available_cars = set()
         cars_black_list = set() # Contains the cars that are taken on the specific date
         for order in all_orders:
@@ -98,8 +98,11 @@ class AvaliableOrdersView(APIView):
             if car not in cars_black_list:
                 cars.add(car)
 
+        cars = list(filter(lambda car: (car.department.id == user.profile.department.id), cars))
+        cars_black_list = list(filter(lambda car: (car.department.id == user.profile.department.id), cars_black_list))
         serializer = CarsSerializer(list(cars), many=True)
-        return Response(serializer.data)
+        black_list_serializer = CarsSerializer(list(cars_black_list), many=True)
+        return Response({"available": serializer.data, "notAvilable": black_list_serializer.data})
 
 
 @permission_classes([IsAuthenticated])
@@ -109,8 +112,7 @@ class CarsView(APIView):
         cars = Cars.objects.all()
         # The next row filters the cars_model list to contain only the
         # cars matching the user's department id.
-        cars = list(filter(lambda car: (car.department.id ==
-                    user.profile.department.id), cars))
+        cars = list(filter(lambda car: (car.department.id == user.profile.department.id), cars))
         serializer = CarsSerializer(cars, many=True)
         return Response(serializer.data)
 

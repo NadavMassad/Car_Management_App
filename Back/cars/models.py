@@ -55,9 +55,9 @@ class CarOrders(models.Model):
     id = models.BigAutoField(primary_key=True) 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Cars, on_delete=models.CASCADE, null=True)
-    orderDate = models.DateTimeField(format('DD-MM-YYYY'), default=datetime.date.today)
-    fromDate = models.DateTimeField(format('DD-MM-YYYY'))
-    toDate = models.DateTimeField(format('DD-MM-YYYY'))
+    orderDate = models.DateTimeField()
+    fromDate = models.DateTimeField()
+    toDate = models.DateTimeField()
     isAllDay = models.BooleanField()
     destination = models.CharField(max_length=50)
 
@@ -75,7 +75,7 @@ class CarOrders(models.Model):
 
     def __str__(self):
         # return str(self.orderDate)
-        return str(self.orderDate) + " : " + self.car_name
+        return self.user_name + " : " + self.car_name
 
 
 class CarMaintenance(models.Model):
