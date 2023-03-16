@@ -14,7 +14,7 @@ export function Login() {
   const logged = useAppSelector(isLogged)
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
+    if (!logged) {
       logout()
     }
   }, [])

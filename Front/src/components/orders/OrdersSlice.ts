@@ -37,7 +37,6 @@ export const checkOrderDatesAsync = createAsyncThunk(
   'myOrder/checkOrderDates',
   async ({ token, dates }: { token: string, dates: DatesCheck }) => {
     const response = await checkOrderDates(token, dates);
-    console.log(response)
     return response;
   }
 );
