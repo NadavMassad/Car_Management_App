@@ -15,7 +15,7 @@ export const getOrders = async (token: string) => {
 
 
 export const addOrder = async (token: string, order: OrderModel) => {
-  return axios.post(MY_SERVER, order,
+  return axios.post(MY_SERVER + 'orders', order,
     {
       headers: {
         'Authorization': `Bearer ${token}`

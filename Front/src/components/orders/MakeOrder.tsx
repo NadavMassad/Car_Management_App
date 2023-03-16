@@ -11,16 +11,16 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import jwt_decode from "jwt-decode"
 import OrderConfirm from './OrderConfirm';
+import CarModel from '../../models/Car';
 
 
 const MakeOrder = () => {
   const dispatch = useAppDispatch()
-  const cars = useAppSelector(carsSelector)
   const token = useAppSelector(userAccess)
   const availableCars = useAppSelector(availableCarsSelector)
   const notAvailableCars = useAppSelector(notAvilableSelector)
   const decoded: any = jwt_decode(token)
-  const orders = useAppSelector(ordersSelector)
+  const [selectedCar, setselectedCar] = useState<CarModel | null>(null)
   const [isAllDay, setisAllDay] = useState(false)
   const [selectedStartDate, setselectedStartDate] = useState<Dayjs | null>(null)
   const [formatedStartDate, setformatedStartDate] = useState("")
@@ -31,8 +31,8 @@ const MakeOrder = () => {
   const [fromDate, setfromDate] = useState<Date | null>(null)
   const [toDate, settoDate] = useState<Date | null>(null)
   const [refreshFlag, setrefreshFlag] = useState(false)
-  const [popUpState, setpopUpState] = useState(false)
   const [datesFlag, setdatesFlag] = useState(false)
+  const [destination, setdestination] = useState("")
   // This function handles the date of the car rent
   const handleStartDateChange = (date: Dayjs | null) => {
     setselectedStartDate(date)
@@ -99,18 +99,17 @@ const MakeOrder = () => {
   return (
     <div style={{ margin: '10px' }}>
       יום שלם: <input defaultChecked={false} type={'checkbox'} onChange={() => handleIsAllDay()} />
-
       <div style={{ width: '400px', marginRight: '5px' }}>
-
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={['DatePicker', 'MobileTimePicker',]}>
-            {/* Start Date */}
+            {/* Date Picking Component */}
             <DemoItem >
               <DatePicker
                 format='DD-MM-YYYY'
                 value={selectedStartDate}
                 onChange={handleStartDateChange} />
             </DemoItem><br /><br />
+            {/* Time Picking Components */}
             <DemoItem >
               {!isAllDay &&
                 <div>
@@ -124,12 +123,10 @@ const MakeOrder = () => {
                   </div>
                 </div>}
             </DemoItem>
-
           </DemoContainer>
         </LocalizationProvider>
       </div>
       <div style={{ marginBottom: '10px' }}>
-
         {formatedStartDate &&
           <div>
             <b>מתאריך:</b>
@@ -148,9 +145,7 @@ const MakeOrder = () => {
         {isAllDay &&
           <div>
             <b>כל היום</b>
-          </div>
-
-        }
+          </div>}
       </div>
       {/* Display The cars */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
@@ -164,8 +159,7 @@ const MakeOrder = () => {
               צבע: {car.color}<br />
               שנה: {car.year}   <br />
               <img src={`http://127.0.0.1:8000${car.image}`} style={{ width: '150px', height: '100px' }} alt={car.model} /><br />
-              {/* <button onClick={()=> dispatch(addOrderAsync({token: token, order: {user: decoded.user_id, car: car.id, orderDate: new Date(), fromDate, toDate, isAllDay}}))}>Order Car</button> */}
-              <button onClick={() => setpopUpState(!popUpState)}>Order Car</button>
+              <button onClick={() => setselectedCar(car)}>Order Car</button>
             </div>
           </div>)}
       </div>
@@ -175,7 +169,7 @@ const MakeOrder = () => {
           <h3>לא זמינות</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '.25rem', gridAutoRows: 'minmax(160px, auto)' }}>
             {notAvailableCars.map(car =>
-              <div key={car.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem', backgroundColor: "gray", zIndex: '1' }}>
+              <div key={car.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem'}}>
 
                 <div style={{ textAlign: 'center' }}>
                   מחלקה: {car.dep_name}<br />
@@ -189,7 +183,17 @@ const MakeOrder = () => {
           </div>
         </div>
       }
+      {/* Pop Up Component - Finish Order */}
+      {selectedCar &&
+        <div style={{position: "fixed",top: "0",left: "0",width: "100%",height: "100vh",backgroundColor: "rgba(0,0,0,0.2)",display: "flex",justifyContent: "center",alignItems: "center"}}>
+          <div style={{position: "relative",padding: "32px",width: "400px", height: "300px",maxWidth: "640px",backgroundColor: "white", border: "2px solid black", borderRadius: "5px"  }}>
+      <img src={`http://127.0.0.1:8000${selectedCar.image}`} style={{ width: '150px', height: '100px' }} alt={selectedCar.model} /><br /><br/>
+      יעד נסיעה: <input onChange={(e) => setdestination(e.target.value)} />
+      <button onClick={()=>dispatch(addOrderAsync({token: token, order: {orderDate: new Date(), fromDate: fromDate, toDate: toDate,isAllDay: isAllDay, user: decoded.user_id, car: selectedCar.id!, destination}}))}>הזמן</button>
+      </div>
     </div>
+}
+    </div >
   )
 }
 

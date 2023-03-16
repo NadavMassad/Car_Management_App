@@ -3,9 +3,9 @@ export default interface OrderModel {
     user: string
     user_name?: string
     car_name?: string
-    car?: number
+    car: number
     carName?: string
-    orderDate: Date | null | string
+    orderDate?: Date | null | string
     fromDate:Date | null
     toDate:  Date | null
     isAllDay: boolean
