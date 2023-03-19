@@ -92,7 +92,6 @@ class AvaliableOrdersView(APIView):
                 cars_black_list.add(order.car)
             else:
                 available_cars.add(order.car)
-        # print(available_cars.difference(cars_black_list))
         cars = available_cars.difference(cars_black_list)
         for car in Cars.objects.all():
             if car not in cars_black_list:
@@ -133,21 +132,6 @@ class CarsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@permission_classes([IsAuthenticated])
-class DepartmentsView(APIView):
-    def get(self, request):
-        my_model = Departments.objects.all()
-        serializer = CreateDepartmentsSerializer(my_model, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = CreateDepartmentsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @permission_classes([IsAuthenticated])
 class CarOrdersView(APIView):
@@ -155,7 +139,6 @@ class CarOrdersView(APIView):
         user = request.user
         user_orders = user.carorders_set.all()
         serializer = CarOrdersSerializer(user_orders, many=True)
-        all_orders = CarOrders.objects.all()
         return Response(serializer.data)
 
     def post(self, request):
@@ -240,5 +223,27 @@ class DrivingsView(APIView):
         serializer = CreateDrivingsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RolesView(APIView):
+    def get(self, request):
+        my_model = Roles.objects.all()
+        serializer = CreateRolesSerializer(my_model, many=True)
+        return Response(serializer.data)
+
+
+class DepartmentsView(APIView):
+    def get(self, request):
+        my_model = Departments.objects.all()
+        serializer = CreateDepartmentsSerializer(my_model, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CreateDepartmentsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

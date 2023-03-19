@@ -53,7 +53,7 @@ export const myOrderSlice = createSlice({
         state.orders = action.payload
       })
       .addCase(addOrderAsync.fulfilled, (state, action) => {
-        // state.orders.push(action.payload)
+        state.orders.push(action.payload)
       })
       .addCase(checkOrderDatesAsync.fulfilled, (state, action) => {
         state.availableCars = action.payload.available
