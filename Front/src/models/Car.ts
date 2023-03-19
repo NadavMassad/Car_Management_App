@@ -6,5 +6,6 @@ export default interface CarModel {
     color: string
     year:  string
     department : string
+    dep_name: string
     image : string
 }

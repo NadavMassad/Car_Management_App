@@ -7,10 +7,13 @@ from .models import (Profile,
                      Drivings,
                      Logs,
                      MaintenanceTypes,
-                     Shifts)
+                     Shifts,
+                     Roles)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 ################## TOKEN SERIALIZER ###############
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -58,6 +61,11 @@ class CreateDepartmentsSerializer(serializers.ModelSerializer):
         model = Departments
         fields = '__all__'
 
+class CreateRolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Roles
+        fields = '__all__'
+
 
 class CreateDrivingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,13 +100,18 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'user_name', 'realID', 'roleLevel',
                   'jobTitle', 'dep_name', 'department']
 
+class CarsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cars
+        fields = ['id', 'licenseNum', 'make', 'model', 
+        'color', 'year', 'department', 'dep_name', 'image']
+
 
 class CarOrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = CarOrders
         fields = ['id', 'user_name', 'car_name', 'orderDate',
-                  'fromDate', 'toDate', 'fromTime', 'toTime',
-                  'isAllDay', 'destination', 'car_image']
+                  'fromDate', 'toDate','isAllDay', 'destination', 'car_image']
 
 
 class LogsSerializer(serializers.ModelSerializer):

@@ -19,16 +19,15 @@ const Logs = () => {
   return (
     <div>
       {profile.roleLevel === 2 &&
-        <div>
-          <h1>Logs</h1>
+        <div style={{marginTop: '10px'}}>
 
           <table style={{ marginLeft: "auto", marginRight: "auto" }}>
             <thead>
               <tr>
-                <th style={{ border: '1px solid black', padding: '5px' }}>Time</th>
-                <th style={{ border: '1px solid black', padding: '5px' }}>User Name</th>
-                <th style={{ border: '1px solid black', padding: '5px' }}>Car</th>
-                <th style={{ border: '1px solid black', padding: '5px' }}>Action</th>
+                <th style={{ border: '1px solid black', padding: '5px' }}>זמן</th>
+                <th style={{ border: '1px solid black', padding: '5px' }}>משתמש</th>
+                <th style={{ border: '1px solid black', padding: '5px' }}>מכונית</th>
+                <th style={{ border: '1px solid black', padding: '5px' }}>פעולה</th>
               </tr>
             </thead>
             <tbody>

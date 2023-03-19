@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -11,8 +13,6 @@ from .serializers import *
 @api_view(['GET'])
 def index(r):
     return Response('index')
-
-
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -69,15 +69,50 @@ class ProfileView(APIView):
 
 
 @permission_classes([IsAuthenticated])
+class AllCarsView(APIView):
+    def get(self, request):
+        cars = Cars.objects.all()
+        serializer = CarsSerializer(cars, many=True)
+        return Response(serializer.data)
+
+
+@permission_classes([IsAuthenticated])
+class AvaliableOrdersView(APIView):
+    def post(self, request):
+        user = request.user
+        date_object = {"fromDate": request.data["fromDate"], "toDate": request.data["toDate"]}
+        fromDate = datetime.fromisoformat(date_object['fromDate'][:-1])
+        toDate = datetime.fromisoformat(date_object['toDate'][:-1])
+        all_orders = CarOrders.objects.all()
+        available_cars = set()
+        cars_black_list = set() # Contains the cars that are taken on the specific date
+        for order in all_orders:
+            # This row checks wether there is alreay and order on the dates the user entered.
+            if (order.toDate.replace(tzinfo=None) <= toDate and order.toDate.replace(tzinfo=None) >= fromDate) or (order.fromDate.replace(tzinfo=None) <= toDate and order.fromDate.replace(tzinfo=None) >= fromDate):
+                cars_black_list.add(order.car)
+            else:
+                available_cars.add(order.car)
+        cars = available_cars.difference(cars_black_list)
+        for car in Cars.objects.all():
+            if car not in cars_black_list:
+                cars.add(car)
+
+        cars = list(filter(lambda car: (car.department.id == user.profile.department.id), cars))
+        cars_black_list = list(filter(lambda car: (car.department.id == user.profile.department.id), cars_black_list))
+        serializer = CarsSerializer(list(cars), many=True)
+        black_list_serializer = CarsSerializer(list(cars_black_list), many=True)
+        return Response({"available": serializer.data, "notAvilable": black_list_serializer.data})
+
+
+@permission_classes([IsAuthenticated])
 class CarsView(APIView):
     def get(self, request):
         user = request.user
-        cars_model = Cars.objects.all()
-        print(user.profile.department.id)
+        cars = Cars.objects.all()
         # The next row filters the cars_model list to contain only the
         # cars matching the user's department id.
-        cars = list(filter(lambda car: (car.department.id  == user.profile.department.id), cars_model))
-        serializer = CreateCarsSerializer(cars, many=True)
+        cars = list(filter(lambda car: (car.department.id == user.profile.department.id), cars))
+        serializer = CarsSerializer(cars, many=True)
         return Response(serializer.data)
 
     def post(self, request):
@@ -97,21 +132,6 @@ class CarsView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@permission_classes([IsAuthenticated])
-class DepartmentsView(APIView):
-    def get(self, request):
-        my_model = Departments.objects.all()
-        serializer = CreateDepartmentsSerializer(my_model, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = CreateDepartmentsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @permission_classes([IsAuthenticated])
 class CarOrdersView(APIView):
@@ -125,10 +145,6 @@ class CarOrdersView(APIView):
         serializer = CreateCarOrdersSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            cur_order = CarOrders.objects.get(id=serializer["id"].value)
-            car = Cars.objects.get(id=request.data['car'])
-            cur_order.carImg = car.image.url
-            cur_order.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -137,9 +153,7 @@ class CarOrdersView(APIView):
 class CarMaintenanceView(APIView):
     def get(self, request):
         my_model = CarMaintenance.objects.all().values('car')
-        print(my_model)
         serializer = CarMaintenanceSerializer(my_model, many=True)
-        print(serializer.data)
         return Response(serializer.data)
 
     def post(self, request):
@@ -186,7 +200,6 @@ class ShiftsView(APIView):
 class LogsView(APIView):
     def get(self, request):
         my_model = Logs.objects.all()
-        print(my_model)
         serializer = LogsSerializer(my_model, many=True)
         return Response(serializer.data)
 
@@ -210,5 +223,27 @@ class DrivingsView(APIView):
         serializer = CreateDrivingsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RolesView(APIView):
+    def get(self, request):
+        my_model = Roles.objects.all()
+        serializer = CreateRolesSerializer(my_model, many=True)
+        return Response(serializer.data)
+
+
+class DepartmentsView(APIView):
+    def get(self, request):
+        my_model = Departments.objects.all()
+        serializer = CreateDepartmentsSerializer(my_model, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CreateDepartmentsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

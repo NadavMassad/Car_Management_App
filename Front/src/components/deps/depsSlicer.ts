@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { DepModel } from '../../models/Deps';
-import { ProfileModel } from '../../models/Profile';
 import { getDeps } from './depsAPI';
 
 
