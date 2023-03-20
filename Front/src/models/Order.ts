@@ -6,9 +6,9 @@ export default interface OrderModel {
     car: number
     carName?: string
     orderDate?: Date | null | string
-    fromDate:Date | null
-    toDate:  Date | null
+    fromDate: Date
+    toDate: Date
     isAllDay: boolean
-    destination? : string
+    destination?: string
     car_image?: string
 }

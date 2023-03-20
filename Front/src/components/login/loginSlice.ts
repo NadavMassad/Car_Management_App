@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { getProfile, login, register,getDepartments,getRoles } from './loginApi';
+import { getProfile, login, register,getDepartments,getRoles } from './loginAPI';
 import {Cred} from '../../models/Cred'
 
 
@@ -55,13 +55,14 @@ export const loginSlice = createSlice({
     logout:(state)=>{
       state.logged = false
       localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
       state.access = ""
+      state.refresh = ""
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.fulfilled, (state, action) => {
-        console.log(action.payload)
         state.access = action.payload.access;
         state.refresh = action.payload.refresh;
         localStorage.setItem("access", action.payload.access)
