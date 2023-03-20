@@ -22,7 +22,7 @@ export function Cars() {
           <div key={car.id} style={{ borderRadius: '5px', border: '2px solid rgb(0, 0, 0)', padding: '.5rem' }}>
 
             <div style={{textAlign: 'center'}}>
-              {/* Department: {car.department}<br /> */}
+              Department: {car.dep_name}<br />
               יצרן: {car.make}<br />
               דגם: {car.model}<br />
               צבע: {car.color}<br />

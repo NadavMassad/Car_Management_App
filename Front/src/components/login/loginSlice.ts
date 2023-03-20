@@ -1,23 +1,27 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { getProfile, login, register } from './loginAPI';
+import { getProfile, login, register,getDepartments,getRoles } from './loginAPI';
 import {Cred} from '../../models/Cred'
 
 
 export interface loginState {
   access: any
+  refresh:any
   logged:boolean
 }
 
 const initialState: loginState = {
-  access: localStorage.getItem('token'),
-  logged: localStorage.hasOwnProperty('token'),
+  access: localStorage.getItem('access'),
+  refresh: localStorage.getItem('refresh'),
+  logged: localStorage.hasOwnProperty('access'),
 };
 
 export const loginAsync = createAsyncThunk(
   'login/login',
-  async (cred: any) => {
+  async (cred: Cred) => {
+    console.log(cred)
     const response = await login(cred);
+    
     return response;
   }
 );
@@ -29,7 +33,20 @@ export const regAsync = createAsyncThunk(
     return response;
   }
 );
-
+export const getDepartmentsAsync = createAsyncThunk(
+  'login/getDepartments',
+  async () => {
+    const response = await getDepartments();
+    return response;
+  }
+);
+export const getRolesAsync = createAsyncThunk(
+  'login/getRoles',
+  async () => {
+    const response = await getRoles();
+    return response;
+  }
+);
 
 export const loginSlice = createSlice({
   name: 'login',
@@ -37,15 +54,19 @@ export const loginSlice = createSlice({
   reducers: {
     logout:(state)=>{
       state.logged = false
-      localStorage.removeItem('token');
+      localStorage.removeItem('access');
+      localStorage.removeItem('refresh');
       state.access = ""
+      state.refresh = ""
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.access = action.payload.access;
-        localStorage.setItem("token", action.payload.access)
+        state.refresh = action.payload.refresh;
+        localStorage.setItem("access", action.payload.access)
+        localStorage.setItem("refresh", action.payload.refresh)
         state.logged = true
       });
   },
@@ -53,5 +74,6 @@ export const loginSlice = createSlice({
 
 export const { logout } = loginSlice.actions;
 export const userAccess = (state: RootState) => state.login.access;
+export const userRefresh = (state: RootState) => state.login.refresh;
 export const isLogged = (state: RootState) => state.login.logged;
 export default loginSlice.reducer;

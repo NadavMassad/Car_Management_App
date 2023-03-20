@@ -7,7 +7,8 @@ from .models import (Profile,
                      Drivings,
                      Logs,
                      MaintenanceTypes,
-                     Shifts)
+                     Shifts,
+                     Roles)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 ################## TOKEN SERIALIZER ###############
@@ -58,6 +59,11 @@ class CreateProfileSerializer(serializers.ModelSerializer):
 class CreateDepartmentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departments
+        fields = '__all__'
+
+class CreateRolesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Roles
         fields = '__all__'
 
 
