@@ -8,12 +8,14 @@ export interface loginState {
   access: any
   refresh:any
   logged:boolean
+  remember:boolean
 }
 
 const initialState: loginState = {
   access: localStorage.getItem('access'),
   refresh: localStorage.getItem('refresh'),
-  logged: localStorage.hasOwnProperty('access'),
+  logged: localStorage.hasOwnProperty('access') || localStorage.hasOwnProperty('refresh') ,
+  remember: false
 };
 
 export const loginAsync = createAsyncThunk(
@@ -21,7 +23,6 @@ export const loginAsync = createAsyncThunk(
   async (cred: Cred) => {
     console.log(cred)
     const response = await login(cred);
-    
     return response;
   }
 );
@@ -58,6 +59,14 @@ export const loginSlice = createSlice({
       localStorage.removeItem('refresh');
       state.access = ""
       state.refresh = ""
+    },
+    remember:(state)=>{
+      console.log("Called remember")
+      state.remember = true
+    },
+    dontRemember:(state)=>{
+      console.log("Called donrRemember")
+      state.remember = false
     }
   },
   extraReducers: (builder) => {
@@ -66,13 +75,13 @@ export const loginSlice = createSlice({
         state.access = action.payload.access;
         state.refresh = action.payload.refresh;
         localStorage.setItem("access", action.payload.access)
-        localStorage.setItem("refresh", action.payload.refresh)
+        state.remember && localStorage.setItem("refresh", action.payload.refresh)
         state.logged = true
       });
   },
 });
 
-export const { logout } = loginSlice.actions;
+export const { logout, remember, dontRemember } = loginSlice.actions;
 export const userAccess = (state: RootState) => state.login.access;
 export const userRefresh = (state: RootState) => state.login.refresh;
 export const isLogged = (state: RootState) => state.login.logged;

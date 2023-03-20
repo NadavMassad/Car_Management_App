@@ -18,6 +18,7 @@ const MakeOrder = () => {
   const availableCars = useAppSelector(availableCarsSelector)
   const notAvailableCars = useAppSelector(notAvilableSelector)
   const decoded: any = jwt_decode(token)
+  const orders = useAppSelector(ordersSelector)
   const [selectedCar, setselectedCar] = useState<CarModel | null>(null)
   const [isAllDay, setisAllDay] = useState(false)
   const [selectedStartDate, setselectedStartDate] = useState<Dayjs | null>(null)
@@ -52,6 +53,9 @@ const MakeOrder = () => {
 
   // This functions handles the start time of the order
   const handleStartTimeChange = (time: Dayjs | null) => {
+    if (endTime) {
+      setendTime(time)
+    }
     setstartTime(time)
     setformatedStartTime(time!.format('HH:mm:ss'))
     setrefreshFlag(!refreshFlag)
@@ -108,8 +112,9 @@ const MakeOrder = () => {
     if ((formatedStartDate && formatedEndDate && formatedStartTime && formatedEndTime) ||
       (formatedStartDate && formatedEndDate && isAllDay)) {
       dispatch(checkOrderDatesAsync({ token: token, dates: { fromDate: fromDate, toDate: toDate, isAllDay: isAllDay } }))
+      console.log(notAvailableCars)
     }
-  }, [datesFlag])
+  }, [datesFlag, formatedStartTime, formatedEndTime])
 
   return (
     <div style={{ margin: '10px' }}>
@@ -210,6 +215,19 @@ const MakeOrder = () => {
                   צבע: {car.color}<br />
                   שנה: {car.year}   <br />
                   <img src={`http://127.0.0.1:8000${car.image}`} style={{ width: '150px', height: '100px' }} alt={car.model} /><br />
+                  <h4>פרטי הזמנה</h4>  
+                  <div>
+                    {orders.filter(order => order.car === car.id).map(order => <div key={order.id}>
+                      מתאריך: {order.fromDate!.toString().slice(0, 10)}<br />
+                      עד תאריך: {order.toDate!.toString().slice(0, 10)}<br />
+                      {order.isAllDay ? <div> כל היום</div> :
+                        <div> משעה: {order.fromDate!.toString().slice(11, 16)}<br />
+                          עד שעה: {order.toDate!.toString().slice(11, 16)}</div>
+                      }
+
+                    </div>)}
+                  </div>
+
                 </div>
               </div>)}
           </div>
